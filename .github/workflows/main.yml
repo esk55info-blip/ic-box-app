@@ -1,0 +1,54 @@
+name: Build iOS App
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Prepare Files
+      run: |
+        # 1. فك الضغط عن ملفك
+        unzip "My App.zip" -d MyCode
+        
+        # 2. حذف النسخ المكررة من الملف المضغوط حتى ما يصير تعارض
+        find MyCode -name "ContentView.swift" -type f -delete
+        find MyCode -name "HomeView.swift" -type f -delete
+        
+        # 3. حماية الملفات اللي عدلتها أنت بالمتصفح (حفظ مؤقت)
+        mkdir -p SafeZone
+        cp SwiftUIAppTemplate/SwiftUIAppTemplate/Features/Home/ContentView.swift SafeZone/ 2>/dev/null || true
+        cp SwiftUIAppTemplate/SwiftUIAppTemplate/Features/Home/HomeView.swift SafeZone/ 2>/dev/null || true
+        
+        # 4. تنظيف القالب القديم بالكامل
+        find SwiftUIAppTemplate/SwiftUIAppTemplate -name "*.swift" -type f -delete
+        
+        # 5. إرجاع ملفاتك المعدلة لمكانها
+        mkdir -p SwiftUIAppTemplate/SwiftUIAppTemplate/Features/Home
+        cp SafeZone/* SwiftUIAppTemplate/SwiftUIAppTemplate/Features/Home/ 2>/dev/null || true
+        
+        # 6. نقل باقي ملفاتك الـ 20 من المجلد المضغوط للتطبيق
+        find MyCode -type f -exec cp {} SwiftUIAppTemplate/SwiftUIAppTemplate/ \;
+
+    - name: Build Unsigned IPA
+      run: |
+        cd SwiftUIAppTemplate
+        xcodebuild -project SwiftUIAppTemplate.xcodeproj -scheme SwiftUIAppTemplate -configuration Release clean archive -archivePath ../build/App.xcarchive CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+        
+        cd ..
+        mkdir -p Payload
+        cp -r build/App.xcarchive/Products/Applications/*.app Payload/
+        zip -r my_app.ipa Payload
+
+    - name: Upload IPA
+      uses: actions/upload-artifact@v4
+      with:
+        name: CinemaApp-IPA
+        path: my_app.ipa
