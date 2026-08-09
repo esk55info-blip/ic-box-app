@@ -1,27 +1,25 @@
 import Foundation
 import SwiftUI
+import Combine
 
-// ==========================================
-// 1. هياكل فك التشفير من فايربيس
-// ==========================================
 struct FirestoreNotificationResponse: Codable {
     let documents: [FirestoreNotificationDoc]?
 }
+
 struct FirestoreNotificationDoc: Codable {
     let fields: NotificationFields?
 }
+
 struct NotificationFields: Codable {
     let title: FirestoreString?
     let message: FirestoreString?
     let date: FirestoreString?
 }
+
 struct FirestoreString: Codable {
     let stringValue: String
 }
 
-// ==========================================
-// 2. هيكل الإشعار داخل التطبيق
-// ==========================================
 struct AppNotification: Identifiable {
     let id = UUID()
     let title: String
@@ -29,16 +27,12 @@ struct AppNotification: Identifiable {
     let date: String
 }
 
-// ==========================================
-// 3. المدير المسؤول عن جلب الإشعارات
-// ==========================================
 class AppNotificationManager: ObservableObject {
     static let shared = AppNotificationManager()
     
     @Published var notifications: [AppNotification] = []
     @Published var hasUnread: Bool = false
     
-    // رابط مجلد الإشعارات في فايربيس
     private let firestoreURL = "https://firestore.googleapis.com/v1/projects/iccbox/databases/(default)/documents/notifications"
     
     init() {
@@ -68,19 +62,15 @@ class AppNotificationManager: ObservableObject {
     }
 }
 
-// ==========================================
-// 4. تصميم واجهة مركز الإشعارات (شاشة كاملة)
-// ==========================================
 struct NotificationCenterView: View {
     let notifications: [AppNotification]
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea() // شاشة سوداء بالكامل
+            Color.black.ignoresSafeArea() 
             
             VStack(spacing: 0) {
-                // شريط العنوان وزر الرجوع الكلاسيكي
                 HStack {
                     Button(action: { dismiss() }) {
                         Image(systemName: "chevron.right")
@@ -95,14 +85,13 @@ struct NotificationCenterView: View {
                     Text("الإشعارات")
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.white)
-                        .padding(.trailing, 30) // لضبط التوسيط بسبب مساحة السهم
+                        .padding(.trailing, 30) 
                     
                     Spacer()
                 }
                 .padding()
                 .background(Color(red: 0.05, green: 0.05, blue: 0.05))
                 
-                // حالة عدم وجود إشعارات
                 if notifications.isEmpty {
                     VStack(spacing: 15) {
                         Spacer()
@@ -115,7 +104,6 @@ struct NotificationCenterView: View {
                         Spacer()
                     }
                 } else {
-                    // عرض الإشعارات على شكل صفوف
                     ScrollView {
                         LazyVStack(spacing: 15) {
                             ForEach(notifications) { notif in
@@ -137,7 +125,7 @@ struct NotificationCenterView: View {
                                         .lineSpacing(4)
                                 }
                                 .padding(16)
-                                .background(Color(red: 0.1, green: 0.1, blue: 0.12)) // لون خلفية الإشعار
+                                .background(Color(red: 0.1, green: 0.1, blue: 0.12)) 
                                 .cornerRadius(12)
                             }
                         }
@@ -146,8 +134,6 @@ struct NotificationCenterView: View {
                 }
             }
         }
-        .environment(\.layoutDirection, .rightToLeft) // الحفاظ على الاتجاه العربي
+        .environment(\.layoutDirection, .rightToLeft) 
     }
 }
-
-
