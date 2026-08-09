@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 // هيكل للفئات الفرعية داخل صفحة أكثر
 struct SubGenreOption: Hashable {
