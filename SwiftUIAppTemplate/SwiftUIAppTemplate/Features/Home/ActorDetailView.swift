@@ -123,7 +123,6 @@ struct ActorDetailView: View {
                     struct ActorCreditsResponse: Codable { let cast: [MovieItem] }
                     let decodedResponse = try JSONDecoder().decode(ActorCreditsResponse.self, from: data)
                     
-                    // تصفية صارمة لأعمال الممثل: وجود بوستر + لغة عنوان مفهومة (عربي/إنجليزي/تركي)
                     let filteredMedia = decodedResponse.cast
                         .filter { $0.posterPath != nil && self.isValidLanguageTitle($0.displayName) }
                         .sorted { ($0.voteAverage ?? 0) > ($1.voteAverage ?? 0) }
