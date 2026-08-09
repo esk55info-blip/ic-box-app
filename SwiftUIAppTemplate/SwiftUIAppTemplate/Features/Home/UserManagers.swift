@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import Combine
 
 // ⭐️ مدير المفضلة (يحفظ الفيلم كاملاً كـ Data)
 class FavoritesManager: ObservableObject {
