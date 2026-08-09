@@ -1,5 +1,6 @@
 import SwiftUI
 import Foundation
+import Combine
 
 class AppConfig: ObservableObject {
     static let shared = AppConfig()
@@ -81,12 +82,12 @@ class AppConfig: ObservableObject {
 class AnalyticsManager {
     static let shared = AnalyticsManager()
     
-    func logMovieClick(movieName: String) { "movie_clicks"
+    func logMovieClick(movieName: String) {
         let urlString = "https://firestore.googleapis.com/v1/projects/iccbox/databases/(default)/documents/movie_clicks"
         guard let url = URL(string: urlString) else { return }
         
         var request = URLRequest(url: url)
-        request.httpMethod = "POST" // POST
+        request.httpMethod = "POST" 
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let formatter = DateFormatter()
@@ -105,10 +106,10 @@ class AnalyticsManager {
         
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
-                print("(error.localizedDescription)")
+                print("Error: \(error.localizedDescription)")
                 return
             }
-            print(" تم تسجيل نقرة للفيلم: \(movieName) بنجاح!")
+            print("Success: \(movieName)")
         }.resume()
     }
 }
