@@ -1,15 +1,15 @@
 import Foundation
 import SwiftUI
+import Combine
 
-// هيكل البيانات للمادة المحملة بالكامل داخل جهاز الآيباد
 struct DownloadedItem: Codable, Identifiable, Hashable {
-    let id: String // معرف فريد مركب (ID أو ID + رقم الحلقة)
+    let id: String
     let movieId: Int
     let title: String
     let posterPath: String?
-    let localPosterPath: String? // مسار البوستر المحفوظ محلياً للعمل بدون نت
+    let localPosterPath: String?
     let isMovie: Bool
-    let showTitle: String? // اسم المسلسل إذا كانت حلقة
+    let showTitle: String?
     let seasonNumber: Int?
     let episodeNumber: Int?
     let fileSize: String
@@ -20,8 +20,8 @@ class DownloadManager: ObservableObject {
     static let shared = DownloadManager()
     
     @Published var downloadedItems: [DownloadedItem] = []
-    @Published var downloadingStates: [String: String] = [:] // تتبع الحالة: "downloading" أو "completed"
-    @Published var toastMessage: String? = nil // لإظهار شعار التنبيه السفلي عند الاكتمال
+    @Published var downloadingStates: [String: String] = [:]
+    @Published var toastMessage: String? = nil
     
     private let fileManager = FileManager.default
     
@@ -37,7 +37,6 @@ class DownloadManager: ObservableObject {
         return documentsDirectory.appendingPathComponent("downloads_secure_db.json")
     }
     
-    // دالة بدء التنزيل الحقيقي والذكي بداخل الـ Sandbox الآمن
     func startDownload(movie: MovieItem, isMovie: Bool, season: Int? = nil, episode: Int? = nil) {
         let downloadID = isMovie ? "\(movie.id)" : "\(movie.id)_S\(season ?? 1)_E\(episode ?? 1)"
         
@@ -52,7 +51,6 @@ class DownloadManager: ObservableObject {
         let simulatedSizeInBytes = isMovie ? 185 * 1024 * 1024 : 48 * 1024 * 1024
         let sizeString = isMovie ? "185 MB" : "48 MB"
         
-        // محاكاة وقت التحميل بالخلفية حته يظهر أنميشن عداد الساعة الحركي
         DispatchQueue.global(qos: .background).async {
             Thread.sleep(forTimeInterval: 2.5) 
             
@@ -78,7 +76,7 @@ class DownloadManager: ObservableObject {
             formatter.dateFormat = "yyyy"
             let dateStr = formatter.string(from: Date())
             
-            let itemTitle = isMovie ? movie.displayName : "الموسم \(season ?? 1) - الحلقة \(episode ?? 1)"
+            let itemTitle = isMovie ? movie.displayName : "Season \(season ?? 1) - Episode \(episode ?? 1)"
             
             let newItem = DownloadedItem(
                 id: downloadID,
@@ -100,7 +98,7 @@ class DownloadManager: ObservableObject {
                     self.downloadingStates[downloadID] = "completed"
                     
                     let displayNotificationName = isMovie ? movie.displayName : "\(movie.displayName) (\(itemTitle))"
-                    self.toastMessage = "تم اكتمال تنزيل \(displayNotificationName) بنجاح"
+                    self.toastMessage = "Download completed for \(displayNotificationName)"
                     self.saveDownloadsDatabase()
                 }
                 
@@ -143,4 +141,3 @@ class DownloadManager: ObservableObject {
         }
     }
 }
-
