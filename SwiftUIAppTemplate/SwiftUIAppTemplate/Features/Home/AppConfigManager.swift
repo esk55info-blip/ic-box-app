@@ -35,10 +35,10 @@ class AppConfigManager: ObservableObject {
     
     init() {
         fetchConfig()
-        startLiveListener() // ð¢ ØªØ´ØºÙÙ Ø§ÙØ±Ø§Ø¯Ø§Ø± Ø§ÙØ­Ù
+        startLiveListener() // تشغيل الرادار الحي
     }
     
-    // ð¢ ÙÙØ­Øµ ÙØ§ÙØ±Ø¨ÙØ³ ÙÙ 3 Ø«ÙØ§ÙÙ ÙØªØ·Ø¨ÙÙ Ø§ÙØªØºÙÙØ±Ø§Øª ÙÙØ±Ø§Ù
+    // يفحص فايربيس كل 3 ثواني لتطبيق التغييرات فورا
     func startLiveListener() {
         liveTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { _ in
             self.fetchConfig()
@@ -65,5 +65,3 @@ class AppConfigManager: ObservableObject {
         }.resume()
     }
 }
-
-
