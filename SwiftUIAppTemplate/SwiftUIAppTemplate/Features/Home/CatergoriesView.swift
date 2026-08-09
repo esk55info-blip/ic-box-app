@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 struct CustomGenre: Identifiable {
     let id = UUID()
