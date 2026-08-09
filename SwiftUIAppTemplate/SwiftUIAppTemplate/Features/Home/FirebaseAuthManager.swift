@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 import UIKit // نحتاجها لضغط الصورة قبل الرفع
-
+import Combine
 // هيكل المستخدم (يحتوي على الصورة والنبذة)
 struct AppUser: Codable {
     var id: String
