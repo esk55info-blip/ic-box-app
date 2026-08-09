@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 class AppLayoutManager: ObservableObject {
     static let shared = AppLayoutManager()
@@ -37,6 +38,7 @@ class AppLayoutManager: ObservableObject {
             return isLandscape ? 140 : 90
         }
     }
+    
     var titleFont: CGFloat {
         isPad ? 14 : 12
     }
@@ -50,4 +52,3 @@ class AppLayoutManager: ObservableObject {
         return [GridItem(.adaptive(minimum: minWidth), spacing: 15)]
     }
 }
-
