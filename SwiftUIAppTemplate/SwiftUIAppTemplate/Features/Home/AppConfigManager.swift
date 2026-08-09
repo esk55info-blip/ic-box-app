@@ -35,10 +35,9 @@ class AppConfigManager: ObservableObject {
     
     init() {
         fetchConfig()
-        startLiveListener() // تشغيل الرادار الحي
+        startLiveListener()
     }
     
-    // يفحص فايربيس كل 3 ثواني لتطبيق التغييرات فورا
     func startLiveListener() {
         liveTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { _ in
             self.fetchConfig()
