@@ -11,7 +11,7 @@ struct AppRootView: View {
 
     var body: some View {
         NavigationStack {
-            HomeView(viewModel: HomeViewModel(container: container))
+            HomeView(viewModel: MovieViewModel(container: container))
         }
     }
 }
