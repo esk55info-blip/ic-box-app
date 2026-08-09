@@ -1,8 +1,3 @@
-//
-//  AppRootView.swift
-//  SwiftUIAppTemplate
-//
-
 import SwiftUI
 
 struct AppRootView: View {
@@ -11,7 +6,7 @@ struct AppRootView: View {
 
     var body: some View {
         NavigationStack {
-            HomeView(viewModel: MovieViewModel(container: container))
+            HomeView()
         }
     }
 }
